@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meduza Chat — Chat</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="chat-extra.css">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo-link"><img src="Untitled.png" alt="Meduza Logo" class="nav-logo"></a>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="chat.html" class="active">Chat</a>
+  <a href="contact.html">Contact</a>
+</nav>
+
+<div class="page">
+  <div class="chat-wrapper">
+
+    <!-- Header cu pseudonimul tau random -->
+    <div class="chat-header">
+      <h2>Camera Întunericului</h2>
+      <p>Scrie. Eliberează. Dispare.</p>
+
+      <!-- Pseudonim anonim generat automat -->
+      <div class="identity-bar">
+        <span class="identity-label">Ești:</span>
+        <span class="identity-name" id="pseudonym">...</span>
+        <button class="identity-refresh" onclick="refreshPseudonym()" title="Generează alt pseudonim">↻</button>
+      </div>
+    </div>
+
+    <!-- Zona de mesaje -->
+    <div id="messages">
+      <div class="message message-ai">
+        <div class="msg-meta">Meduza AI &nbsp;·&nbsp; acum</div>
+        <div class="msg-text">Bine ai venit în umbră. Vorbele tale sunt în siguranță aici. Cu ce te pot ajuta?</div>
+        <div class="msg-reactions">
+          <button class="reaction-btn" onclick="addReaction(this, '❤️')">❤️ <span>0</span></button>
+          <button class="reaction-btn" onclick="addReaction(this, '🕯️')">🕯️ <span>0</span></button>
+          <button class="reaction-btn" onclick="addReaction(this, '🌙')">🌙 <span>0</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Indicator "AI scrie..." -->
+    <div id="typing-indicator" class="typing-indicator" style="display:none;">
+      <span></span><span></span><span></span>
+      Meduza AI scrie...
+    </div>
+
+    <!-- Input + buton -->
+    <div class="chat-input-row">
+      <input id="msg" type="text" placeholder="Șoptește ceva...">
+      <button id="sendBtn" onclick="send()">Trimite</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

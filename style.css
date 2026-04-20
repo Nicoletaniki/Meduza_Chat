@@ -1,0 +1,516 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500&family=EB+Garamond:ital,wght@0,400;1,400&display=swap');
+
+:root {
+  --bg:           #f9f7ff;      /* fundalul paginii */
+  --surface:      #ffffff;      /* fundalul cardurilor */
+  --surface2:     #f2eeff;      /* fundalul mesajelor din chat */
+  --border:       #ddd5f0;      /* culoarea bordurilor */
+  --border-glow:  #9b6fd4;      /* bordura când e activ / hover */
+  --accent:       #7b3fa0;      /* violet principal */
+  --accent2:      #5a2080;      /* violet închis */
+  --accent3:      #9b6fd4;      /* violet mediu */
+  --text:         #1a1025;      /* text principal */
+  --text-dim:     #5a4a72;      /* text secundar / mai slab */
+  --text-faint:   #a090b8;      /* text foarte slab (placeholder) */
+  --gold:         #9b7a30;      /* auriu pentru ornamente */
+}
+
+
+/* ================================================
+   2. RESET DE BAZA
+   ================================================
+   Elimina spatiile implicite ale browserului
+   si seteaza stilul general al paginii.
+   ================================================ */
+
+* {
+  box-sizing: border-box; /* padding-ul se include in latime */
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 18px;
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+
+  /* gradient subtil pe fundal */
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(180,140,230,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 90%, rgba(150,100,220,0.10) 0%, transparent 60%);
+}
+
+
+/* ================================================
+   3. NAVIGATIE (NAVBAR)
+   ================================================
+   Bara fixata sus care ramane vizibila la scroll.
+   ================================================ */
+
+nav {
+  position: fixed;      /* ramane sus la scroll */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;         /* sa fie deasupra oricarui alt element */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  height: 64px;
+  padding: 0 32px;
+
+  background: rgba(249, 247, 255, 0.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 24px rgba(120,80,180,0.07);
+}
+
+nav a:not(.nav-logo-link) {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  position: relative;
+  transition: color 0.3s;
+}
+
+nav a:not(.nav-logo-link):hover,
+nav a.active {
+  color: var(--accent2);
+}
+
+.nav-logo-link {
+  margin-right: 16px;   /* spatiu fata de linkuri */
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.nav-logo {
+  height: 38px;         /*  schimba inaltimea logo-ului */
+  width: auto;          /* latimea se ajusteaza automat */
+  object-fit: contain;
+  filter: brightness(0.9);
+  transition: filter 0.3s;
+}
+
+.nav-logo:hover {
+  filter: brightness(1.2) drop-shadow(0 0 8px rgba(176,108,224,0.5));
+}
+
+.page {
+  padding-top: 64px;    /* spatiu pentru bara */
+  min-height: 100vh;
+}
+
+.btn {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 14px 36px;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent3), var(--border-glow));
+  color: white;
+  box-shadow: 0 0 28px rgba(123,63,160,0.35);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 48px rgba(176,108,224,0.55);
+  transform: translateY(-2px);
+}
+
+/* Buton secundar (transparent cu bordura) */
+.btn-secondary {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent2);
+  box-shadow: 0 0 18px rgba(123,63,160,0.2);
+  transform: translateY(-2px);
+}
+
+
+/* ================================================
+   6. CARDURI
+   ================================================ */
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;       /* centrat orizontal */
+  padding: 80px 40px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 48px 52px;
+}
+
+.card-ornament {
+  text-align: center;
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 6px;
+  margin-bottom: 28px;
+  opacity: 0.5;
+}
+
+.card h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 26px;
+  color: var(--text);
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.card p {
+  color: var(--text-dim);
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 44px;
+}
+
+.section-label {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.section-header h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 30px;
+  color: var(--text);
+  letter-spacing: 2px;
+}
+
+.section-header .divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 18px auto;
+  max-width: 280px;
+}
+
+.section-header .divider::before,
+.section-header .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.section-header .divider span {
+  color: var(--gold);
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+
+/* ================================================
+   7. FORMULARE
+   ================================================ */
+
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-label {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 8px;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  background: #f9f7ff;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'EB Garamond', serif;
+  font-size: 17px;
+  padding: 13px 16px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: var(--border-glow);
+  box-shadow: 0 0 18px rgba(123,63,160,0.2);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+
+.chat-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px);
+}
+
+.chat-header {
+  text-align: center;
+  margin-bottom: 24px;
+  flex-shrink: 0;
+}
+
+.chat-header h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 20px;
+  color: var(--text);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+.chat-header p {
+  font-style: italic;
+  color: var(--text-faint);
+  font-size: 15px;
+}
+
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.message {
+  padding: 11px 16px;
+  background: var(--surface2);
+  border-left: 2px solid var(--accent3);
+  color: var(--text);
+  font-size: 16px;
+  animation: msgIn 0.3s ease;
+}
+
+.message .msg-meta {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-faint);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.chat-input-row {
+  display: flex;
+  border: 1px solid var(--border);
+  border-top: none;
+}
+
+#msg {
+  flex: 1;
+  background: #f9f7ff;
+  border: none;
+  color: var(--text);
+  font-family: 'EB Garamond', serif;
+  font-size: 17px;
+  padding: 15px 18px;
+  outline: none;
+}
+
+#msg::placeholder {
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+#sendBtn {
+  background: linear-gradient(135deg, var(--accent3), var(--border-glow));
+  border: none;
+  color: white;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: box-shadow 0.3s;
+}
+
+#sendBtn:hover {
+  box-shadow: 0 0 28px rgba(123,63,160,0.5);
+}
+
+.features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 32px;
+}
+
+.feature {
+  padding: 24px 22px;
+  background: #f4f0fc;
+  border: 1px solid var(--border);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.feature:hover {
+  border-color: var(--accent3);
+  box-shadow: 0 0 18px rgba(106,42,138,0.15);
+}
+
+.feature-icon {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.feature h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--accent2);
+  margin-bottom: 6px;
+}
+
+.feature p {
+  font-size: 14px;
+  color: var(--text-faint);
+}
+
+.contact-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(58,34,64,0.3);
+  color: var(--text-dim);
+}
+
+.contact-info .ci-label {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  min-width: 80px;
+}
+
+.contact-info a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.contact-info a:hover {
+  color: var(--accent2);
+}
+
+footer {
+  text-align: center;
+  padding: 36px;
+  border-top: 1px solid var(--border);
+  color: var(--text-faint);
+  font-size: 13px;
+  letter-spacing: 1px;
+  margin-top: 40px;
+}
+
+footer span {
+  color: var(--gold);
+  opacity: 0.5;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.animate-in {
+  animation: fadeDown 0.8s ease both;
+}
+
+@media (max-width: 640px) {
+  nav {
+    padding: 0 10px;
+    gap: 0;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+
+  nav a:not(.nav-logo-link) {
+    padding: 8px 8px;
+    font-size: 10px;
+  }
+
+  .nav-logo {
+    height: 28px;
+  }
+
+  .container {
+    padding: 50px 18px;
+  }
+
+  .card {
+    padding: 30px 20px;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-wrapper {
+    padding: 30px 14px;
+  }
+}

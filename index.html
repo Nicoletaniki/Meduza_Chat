@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meduza Chat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo-link">
+    <img src="Untitled.png" alt="Meduza Logo" class="nav-logo">
+  </a>
+  <a href="index.html" class="active">Home</a>
+  <a href="about.html">About</a>
+  <a href="chat.html">Chat</a>
+  <a href="contact.html">Contact</a>
+</nav>
+
+
+<div class="page">
+
+  <!-- Sectiunea principala (centrata pe ecran) -->
+  <section class="hero" style="
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 64px);
+    text-align: center;
+    padding: 60px 40px;
+  ">
+
+    <!-- Ornament decorativ -->
+    <p style="color: var(--gold); font-size: 13px; letter-spacing: 8px; opacity: 0.5; margin-bottom: 32px; animation: fadeDown 1s ease both;">
+      ✦ &nbsp; ✦ &nbsp; ✦
+    </p>
+
+    <!-- Titlul principal -->
+    <h1 style="
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(36px, 7vw, 76px);
+      color: var(--text);
+      letter-spacing: 4px;
+      line-height: 1.1;
+      margin-bottom: 10px;
+      text-shadow: 0 0 40px rgba(120,60,180,0.15);
+      animation: fadeDown 1s ease 0.15s both;
+    ">
+      Meduza <span style="color: var(--accent);">Chat</span>
+    </h1>  
+    </p>
+
+    <!-- Descriere scurta -->
+    <p style="
+      max-width: 460px;
+      color: var(--text-dim);
+      font-size: 17px;
+      margin-bottom: 48px;
+      animation: fadeDown 1s ease 0.45s both;
+    ">
+      Un spatiu anonim, fara judecata — pentru ganduri prea grele ca sa le porti singur.
+    </p>
+
+    <!-- Butoane -->
+    <div style="display: flex; gap: 20px; animation: fadeDown 1s ease 0.6s both;">
+      <a href="chat.html" class="btn btn-primary">Intra in Chat</a>
+      <a href="about.html" class="btn btn-secondary">Despre noi</a>
+    </div>
+
+  </section>
+
+  <footer>
+    <span>✦</span> &nbsp; Meduza Chat &nbsp; <span>✦</span>
+  </footer>
+</div>
+
+</body>
+</html>
