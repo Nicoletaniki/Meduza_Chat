@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meduza Chat — Chat</title>
+  <title>Meduza Chat</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="chat-extra.css">
 </head>
 <body>
 
 <nav>
-  <a href="index.html" class="nav-logo-link"><img src="Untitled.png" alt="Meduza Logo" class="nav-logo"></a>
+  <a href="index.html" class="nav-logo-link"><img src="Untitled.png" alt="Logo" class="nav-logo"></a>
   <a href="index.html">Home</a>
   <a href="about.html">About</a>
   <a href="chat.html" class="active">Chat</a>
@@ -20,39 +20,26 @@
 <div class="page">
   <div class="chat-wrapper">
 
-    <!-- Header cu pseudonimul tau random -->
     <div class="chat-header">
       <h2>Camera Întunericului</h2>
       <p>Scrie. Eliberează. Dispare.</p>
-
-      <!-- Pseudonim anonim generat automat -->
       <div class="identity-bar">
         <span class="identity-label">Ești:</span>
         <span class="identity-name" id="pseudonym">...</span>
-        <button class="identity-refresh" onclick="refreshPseudonym()" title="Generează alt pseudonim">↻</button>
+        <button class="identity-refresh" onclick="refreshPseudonym()" title="Pseudonim nou">↻</button>
+      </div>
+      <div class="online-bar">
+        <span class="online-dot"></span>
+        <span id="online-count">1</span> în umbră acum
       </div>
     </div>
 
-    <!-- Zona de mesaje -->
-    <div id="messages">
-      <div class="message message-ai">
-        <div class="msg-meta">Meduza AI &nbsp;·&nbsp; acum</div>
-        <div class="msg-text">Bine ai venit în umbră. Vorbele tale sunt în siguranță aici. Cu ce te pot ajuta?</div>
-        <div class="msg-reactions">
-          <button class="reaction-btn" onclick="addReaction(this, '❤️')">❤️ <span>0</span></button>
-          <button class="reaction-btn" onclick="addReaction(this, '🕯️')">🕯️ <span>0</span></button>
-          <button class="reaction-btn" onclick="addReaction(this, '🌙')">🌙 <span>0</span></button>
-        </div>
-      </div>
-    </div>
+    <div id="messages"></div>
 
-    <!-- Indicator "AI scrie..." -->
     <div id="typing-indicator" class="typing-indicator" style="display:none;">
-      <span></span><span></span><span></span>
-      Meduza AI scrie...
+      <span></span><span></span><span></span> Cineva scrie...
     </div>
 
-    <!-- Input + buton -->
     <div class="chat-input-row">
       <input id="msg" type="text" placeholder="Șoptește ceva...">
       <button id="sendBtn" onclick="send()">Trimite</button>
@@ -61,6 +48,130 @@
   </div>
 </div>
 
-<script src="script.js"></script>
+<script type="module">
+  import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc,
+           onSnapshot, query, orderBy, limit,
+           serverTimestamp }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getDatabase, ref,
+           set, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  // ── Cheile tale Firebase ──
+  const firebaseConfig = {
+    apiKey:            "AIzaSyCtse5s-e1tNMe59NhqBgQeDykLXWNZ8D0",
+    authDomain:        "meduza-chat-79b2a.firebaseapp.com",
+    databaseURL:       "https://meduza-chat-79b2a-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:         "meduza-chat-79b2a",
+    storageBucket:     "meduza-chat-79b2a.firebasestorage.app",
+    messagingSenderId: "498109467882",
+    appId:             "1:498109467882:web:8f5c80348f861adca11b93",
+    measurementId:     "G-JYK4WSBHVK"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const db   = getFirestore(app);
+  const rtdb = getDatabase(app);
+
+  // ── Pseudonime anonime ──
+  const adj  = ["Shadow","Silent","Hollow","Velvet","Crimson","Misty","Broken","Ashen","Lonely","Lunar","Pale","Dark","Lost","Whisper","Fading","Echoing"];
+  const noun = ["Wolf","Rose","Ghost","Raven","Storm","Moon","Tear","Flame","Soul","Mist","Void","Echo","Ash","Dream","Crow","Thorn"];
+
+  function genName() {
+    return adj[Math.floor(Math.random()*adj.length)]
+         + noun[Math.floor(Math.random()*noun.length)]
+         + (Math.floor(Math.random()*90)+10);
+  }
+
+  function getMe() {
+    let s = sessionStorage.getItem("mz_name");
+    if (!s) { s = genName(); sessionStorage.setItem("mz_name", s); }
+    return s;
+  }
+
+  window.refreshPseudonym = () => {
+    const n = genName();
+    sessionStorage.setItem("mz_name", n);
+    document.getElementById("pseudonym").textContent = n;
+  };
+
+  document.getElementById("pseudonym").textContent = getMe();
+
+  // ── Prezenta online ──
+  const presRef = ref(rtdb, "presence/" + getMe());
+  set(presRef, { online: true });
+  onDisconnect(presRef).remove();
+
+  onValue(ref(rtdb, "presence"), snap => {
+    const count = snap.exists() ? Object.keys(snap.val()).length : 1;
+    document.getElementById("online-count").textContent = count;
+  });
+
+  // ── Trimite mesaj ──
+  window.send = async () => {
+    const input = document.getElementById("msg");
+    const text  = input.value.trim();
+    if (!text) return;
+    input.value = "";
+    await addDoc(collection(db, "messages"), {
+      text,
+      author:    getMe(),
+      timestamp: serverTimestamp()
+    });
+  };
+
+  // ── Asculta mesaje noi in timp real ──
+  const q    = query(collection(db, "messages"), orderBy("timestamp","asc"), limit(100));
+  const seen = new Set();
+
+  onSnapshot(q, snap => {
+    snap.docChanges().forEach(ch => {
+      if (ch.type === "added" && !seen.has(ch.doc.id)) {
+        seen.add(ch.doc.id);
+        const d = ch.doc.data();
+        showMsg(d.text, d.author, d.author === getMe());
+      }
+    });
+  });
+
+  // ── Afiseaza mesaj ──
+  function showMsg(text, author, mine) {
+    const msgs = document.getElementById("messages");
+    const time = new Date().toLocaleTimeString("ro-RO", { hour:"2-digit", minute:"2-digit" });
+    const div  = document.createElement("div");
+    div.className = "message " + (mine ? "message-user" : "message-other");
+    div.innerHTML = `
+      <div class="msg-meta">${esc(author)} &nbsp;·&nbsp; ${time}</div>
+      <div class="msg-text">${esc(text)}</div>
+      <div class="msg-reactions">
+        <button class="reaction-btn" onclick="react(this)">❤️ <span>0</span></button>
+        <button class="reaction-btn" onclick="react(this)">🕯️ <span>0</span></button>
+        <button class="reaction-btn" onclick="react(this)">🌙 <span>0</span></button>
+      </div>`;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  // ── Reactii emoji ──
+  window.react = btn => {
+    const s = btn.querySelector("span");
+    const n = parseInt(s.textContent) || 0;
+    btn.classList.toggle("active");
+    s.textContent = btn.classList.contains("active") ? n + 1 : n - 1;
+  };
+
+  // ── Helper ──
+  function esc(s) {
+    return String(s)
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;");
+  }
+
+  // ── Enter = trimite ──
+  document.getElementById("msg").addEventListener("keydown", e => {
+    if (e.key === "Enter") window.send();
+  });
+</script>
+
 </body>
 </html>

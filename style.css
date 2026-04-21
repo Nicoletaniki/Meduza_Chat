@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500&family=EB+Garamond:ital,wght@0,400;1,400&display=swap');
 
 :root {
-  --bg:           #f9f7ff;      /* fundalul paginii */
+  --bg:           #f6f0f9;      /* fundalul paginii */
   --surface:      #ffffff;      /* fundalul cardurilor */
   --surface2:     #f2eeff;      /* fundalul mesajelor din chat */
   --border:       #ddd5f0;      /* culoarea bordurilor */
@@ -45,12 +45,6 @@ body {
     radial-gradient(ellipse 60% 80% at 80% 90%, rgba(150,100,220,0.10) 0%, transparent 60%);
 }
 
-
-/* ================================================
-   3. NAVIGATIE (NAVBAR)
-   ================================================
-   Bara fixata sus care ramane vizibila la scroll.
-   ================================================ */
 
 nav {
   position: fixed;      /* ramane sus la scroll */
