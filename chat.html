@@ -14,6 +14,7 @@
   <a href="index.html">Home</a>
   <a href="about.html">About</a>
   <a href="chat.html" class="active">Chat</a>
+  <a href="rules.html" class="active">Rules</a>
   <a href="contact.html">Contact</a>
 </nav>
 
@@ -162,7 +163,28 @@
     await addDoc(collection(db, "messages"), msgData);
   };
 
+// ── Șterge mesajele mai vechi de X ore ──
+// Schimbă 24 cu câte ore vrei tu
+const ORE = 24;
 
+async function stergeVechi() {
+  const { getDocs, deleteDoc, Timestamp } = await import(
+    "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+  );
+  const limita = Timestamp.fromMillis(Date.now() - ORE * 60 * 60 * 1000);
+  const toate  = await getDocs(
+    query(collection(db, "messages"), orderBy("timestamp", "asc"))
+  );
+  toate.forEach(doc => {
+    if (doc.data().timestamp && doc.data().timestamp < limita) {
+      deleteDoc(doc.ref);
+    }
+  });
+}
+
+// Rulează când se deschide pagina + la fiecare oră
+stergeVechi();
+setInterval(stergeVechi, 60 * 60 * 1000);
   // ── Asculta mesaje noi ──
   const q    = query(collection(db, "messages"), orderBy("timestamp","asc"), limit(100));
   const seen = new Set();
