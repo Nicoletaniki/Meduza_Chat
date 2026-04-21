@@ -1,7 +1,7 @@
 const adjective = [
-  "Shadow", "Silent", "Hollow", "Velvet", "Crimson", "Fading",
-  "Misty", "Broken", "Ashen", "Lonely", "Lunar", "Numb",
-  "Echoing", "Pale", "Dark", "Drifting", "Lost", "Whisper"
+  "Sis", "Silent", "Human", "Velvet", "Crimson", "Fading",
+  "Misty", "HearMeOut", "Alpha", "Lonely", "Lunar", "Numb",
+  "Echoing", "Pale", "Dark", "Mango", "Lost", "Whisper"
 ];
 
 const noun = [
