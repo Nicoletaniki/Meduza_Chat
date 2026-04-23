@@ -61,20 +61,6 @@
 }
 
 
-/* ── Indicator "AI scrie..." ── */
-.typing-indicator {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
-  color: var(--text-faint);
-  font-style: italic;
-  font-size: 13px;
-  border-left: 2px solid var(--accent);
-  background: var(--surface2);
-  margin: 0 0 0 0; /* fara margin, e lipit de zona de mesaje */
-}
-
 /* Cele 3 puncte animate */
 .typing-indicator span {
   width: 5px;
@@ -135,11 +121,4 @@
 .reaction-btn:hover {
   border-color: var(--accent3);
   transform: scale(1.08);
-}
-
-
-/* ── Buton dezactivat cat AI raspunde ── */
-#sendBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }

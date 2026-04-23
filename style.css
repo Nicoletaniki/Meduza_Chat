@@ -1,8 +1,7 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500&family=EB+Garamond:ital,wght@0,400;1,400&display=swap');
 
 :root {
-  --bg:           #f6f0f9;      /* fundalul paginii */
+  --bg:           #f9f7ff;      /* fundalul paginii */
   --surface:      #ffffff;      /* fundalul cardurilor */
   --surface2:     #f2eeff;      /* fundalul mesajelor din chat */
   --border:       #ddd5f0;      /* culoarea bordurilor */
@@ -15,15 +14,6 @@
   --text-faint:   #a090b8;      /* text foarte slab (placeholder) */
   --gold:         #9b7a30;      /* auriu pentru ornamente */
 }
-
-
-/* ================================================
-   2. RESET DE BAZA
-   ================================================
-   Elimina spatiile implicite ale browserului
-   si seteaza stilul general al paginii.
-   ================================================ */
-
 * {
   box-sizing: border-box; /* padding-ul se include in latime */
   margin: 0;
@@ -43,10 +33,9 @@ body {
   background-image:
     radial-gradient(ellipse 80% 60% at 20% 10%, rgba(180,140,230,0.12) 0%, transparent 60%),
     radial-gradient(ellipse 60% 80% at 80% 90%, rgba(150,100,220,0.10) 0%, transparent 60%);
-}
 
 
-nav {
+}nav {
   position: fixed;      /* ramane sus la scroll */
   top: 0;
   left: 0;
@@ -84,6 +73,25 @@ nav a.active {
   color: var(--accent2);
 }
 
+/* Linia animata sub link-ul activ */
+nav a:not(.nav-logo-link)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  transition: width 0.3s;
+}
+
+nav a:not(.nav-logo-link):hover::after,
+nav a.active::after {
+  width: 70%;
+}
+
 .nav-logo-link {
   margin-right: 16px;   /* spatiu fata de linkuri */
   display: flex;
@@ -92,7 +100,7 @@ nav a.active {
 }
 
 .nav-logo {
-  height: 38px;         /*  schimba inaltimea logo-ului */
+  height: 38px;         /* <-- schimba inaltimea logo-ului */
   width: auto;          /* latimea se ajusteaza automat */
   object-fit: contain;
   filter: brightness(0.9);
@@ -104,9 +112,14 @@ nav a.active {
 }
 
 .page {
-  padding-top: 64px;    /* spatiu pentru bara */
+  padding-top: 64px;    /* spatiu pentru navbar */
   min-height: 100vh;
 }
+
+
+/* ================================================
+   5. BUTOANE
+   ================================================ */
 
 .btn {
   font-family: 'Cinzel', serif;
@@ -121,6 +134,7 @@ nav a.active {
   transition: all 0.3s;
 }
 
+/* Buton principal (violet plin) */
 .btn-primary {
   background: linear-gradient(135deg, var(--accent3), var(--border-glow));
   color: white;
@@ -282,6 +296,10 @@ nav a.active {
 }
 
 
+/* ================================================
+   8. CHAT
+   ================================================ */
+
 .chat-wrapper {
   max-width: 700px;
   margin: 0 auto;
@@ -381,6 +399,11 @@ nav a.active {
   box-shadow: 0 0 28px rgba(123,63,160,0.5);
 }
 
+
+/* ================================================
+   9. ABOUT — Feature Cards
+   ================================================ */
+
 .features {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -418,6 +441,11 @@ nav a.active {
   color: var(--text-faint);
 }
 
+
+/* ================================================
+   10. CONTACT
+   ================================================ */
+
 .contact-info {
   display: flex;
   align-items: center;
@@ -446,6 +474,11 @@ nav a.active {
   color: var(--accent2);
 }
 
+
+/* ================================================
+   11. FOOTER
+   ================================================ */
+
 footer {
   text-align: center;
   padding: 36px;
@@ -461,6 +494,11 @@ footer span {
   opacity: 0.5;
 }
 
+
+/* ================================================
+   12. ANIMATII
+   ================================================ */
+
 @keyframes fadeDown {
   from { opacity: 0; transform: translateY(-16px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -474,6 +512,11 @@ footer span {
 .animate-in {
   animation: fadeDown 0.8s ease both;
 }
+
+
+/* ================================================
+   RESPONSIVE — ecrane mici (telefon)
+   ================================================ */
 
 @media (max-width: 640px) {
   nav {
@@ -507,4 +550,46 @@ footer span {
   .chat-wrapper {
     padding: 30px 14px;
   }
+}
+
+
+/* ── Rules page ── */
+.rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.rule-item {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.rule-number {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 22px;
+  color: var(--accent);
+  opacity: 0.4;
+  min-width: 40px;
+  line-height: 1;
+  padding-top: 4px;
+}
+
+.rule-content h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.rule-content p {
+  color: var(--text-dim);
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 0;
 }

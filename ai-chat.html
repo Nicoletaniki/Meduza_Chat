@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meduza — Chat cu AI</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="chat-extra.css">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo-link"><img src="Untitled.png" alt="Logo" class="nav-logo"></a>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="ai-chat.html" class="active">AI Chat</a>
+  <a href="chat.html">Chat Live</a>
+  <a href="rules.html">Rules</a>
+  <a href="contact.html">Contact</a>
+</nav>
+
+<div class="page">
+  <div class="chat-wrapper">
+
+    <div class="chat-header">
+      <h2>Meduza AI</h2>
+      <p>Vorbește cu inteligența artificială — confidențial, fără judecată.</p>
+      <div class="identity-bar">
+        <span class="identity-label">Ești:</span>
+        <span class="identity-name" id="pseudonym">...</span>
+        <button class="identity-refresh" onclick="refreshPseudonym()">↻</button>
+      </div>
+    </div>
+
+    <div id="messages">
+      <!-- Mesaj de bun venit de la AI -->
+      <div class="message message-ai">
+        <div class="msg-meta">Meduza AI &nbsp;·&nbsp; acum</div>
+        <div class="msg-text">Bună. Sunt Meduza — un spațiu sigur pentru gândurile tale. Cu ce te pot ajuta astăzi?</div>
+        <div class="msg-reactions">
+          <button class="reaction-btn" onclick="react(this)">❤️ <span>0</span></button>
+          <button class="reaction-btn" onclick="react(this)">🕯️ <span>0</span></button>
+          <button class="reaction-btn" onclick="react(this)">🌙 <span>0</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div id="typing-indicator" class="typing-indicator" style="display:none;">
+      <span></span><span></span><span></span> Meduza AI scrie...
+    </div>
+
+    <div class="chat-input-row">
+      <input id="msg" type="text" placeholder="Șoptește ceva...">
+      <button id="sendBtn" onclick="send()">Trimite</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── Pseudonime ──
+  const adj  = ["Shadow","Silent","Hollow","Velvet","Crimson","Misty","Broken","Ashen","Lonely","Lunar","Pale","Dark","Lost","Whisper"];
+  const noun = ["Wolf","Rose","Ghost","Raven","Storm","Moon","Tear","Flame","Soul","Mist","Void","Echo","Ash","Dream","Crow"];
+
+  function genName() {
+    return adj[Math.floor(Math.random()*adj.length)] + noun[Math.floor(Math.random()*noun.length)] + (Math.floor(Math.random()*90)+10);
+  }
+  function getMe() {
+    let s = sessionStorage.getItem("mz_name");
+    if (!s) { s = genName(); sessionStorage.setItem("mz_name", s); }
+    return s;
+  }
+  function refreshPseudonym() {
+    const n = genName();
+    sessionStorage.setItem("mz_name", n);
+    document.getElementById("pseudonym").textContent = n;
+  }
+  document.getElementById("pseudonym").textContent = getMe();
+
+  // ── Istoricul conversatiei cu AI ──
+  // Trimitem tot istoricul la fiecare mesaj ca AI-ul sa tina minte
+  const history = [];
+
+  async function send() {
+    const input = document.getElementById("msg");
+    const text  = input.value.trim();
+    if (!text) return;
+    input.value = "";
+
+    // Afiseaza mesajul utilizatorului
+    addMessage(text, getMe(), "user");
+
+    // Adauga in istoric
+    history.push({ role: "user", content: text });
+
+    // Cere raspuns de la AI
+    await getAIResponse();
+  }
+
+  function addMessage(text, author, type) {
+    const msgs = document.getElementById("messages");
+    const time = new Date().toLocaleTimeString("ro-RO", { hour:"2-digit", minute:"2-digit" });
+    const div  = document.createElement("div");
+    div.className = "message " + (type === "ai" ? "message-ai" : "message-user");
+    div.innerHTML = `
+      <div class="msg-meta">${esc(author)} &nbsp;·&nbsp; ${time}</div>
+      <div class="msg-text">${esc(text)}</div>
+      <div class="msg-reactions">
+        <button class="reaction-btn" onclick="react(this)">❤️ <span>0</span></button>
+        <button class="reaction-btn" onclick="react(this)">🕯️ <span>0</span></button>
+        <button class="reaction-btn" onclick="react(this)">🌙 <span>0</span></button>
+      </div>`;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  async function getAIResponse() {
+    const indicator = document.getElementById("typing-indicator");
+    const sendBtn   = document.getElementById("sendBtn");
+    indicator.style.display = "flex";
+    sendBtn.disabled = true;
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          system: `Esti Meduza, un asistent empatic si misterios pentru un chat anonim.
+Vorbesti in romana, cu un ton cald, poetic si intelegator.
+Esti aici sa asculti, sa oferi suport emotional si sa ajuti utilizatorii sa se simta intelesi.
+Raspunsurile tale sunt scurte (2-4 propozitii), sincere si fara judecata.
+Folosesti uneori metafore poetice subtile.`,
+          messages: history
+        })
+      });
+
+      const data   = await response.json();
+      const aiText = data.content?.[0]?.text || "Umbra nu raspunde momentan...";
+
+      history.push({ role: "assistant", content: aiText });
+      addMessage(aiText, "Meduza AI", "ai");
+
+    } catch (err) {
+      addMessage("Ceva nu a mers. Încearcă din nou.", "Meduza AI", "ai");
+    } finally {
+      indicator.style.display = "none";
+      sendBtn.disabled = false;
+    }
+  }
+
+  function react(btn) {
+    const s = btn.querySelector("span");
+    const n = parseInt(s.textContent) || 0;
+    btn.classList.toggle("active");
+    s.textContent = btn.classList.contains("active") ? n+1 : n-1;
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  document.getElementById("msg").addEventListener("keydown", e => {
+    if (e.key === "Enter") send();
+  });
+</script>
+
+</body>
+</html>
