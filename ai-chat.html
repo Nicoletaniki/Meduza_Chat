@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meduza — Chat cu AI</title>
+  <title>Meduza — AI Chat</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="chat-extra.css">
 </head>
@@ -33,7 +33,6 @@
     </div>
 
     <div id="messages">
-      <!-- Mesaj de bun venit de la AI -->
       <div class="message message-ai">
         <div class="msg-meta">Meduza AI &nbsp;·&nbsp; acum</div>
         <div class="msg-text">Bună. Sunt Meduza — un spațiu sigur pentru gândurile tale. Cu ce te pot ajuta astăzi?</div>
@@ -58,6 +57,14 @@
 </div>
 
 <script>
+  // =============================================
+  // !! IMPORTANT !!
+  // Dupa ce deployezi pe Vercel, inlocuieste
+  // URL-ul de mai jos cu linkul tau real.
+  // Ex: https://meduza-api.vercel.app/api/chat
+  // =============================================
+  const API_URL = "https://meduza-api.vercel.app/api/chat";
+
   // ── Pseudonime ──
   const adj  = ["Shadow","Silent","Hollow","Velvet","Crimson","Misty","Broken","Ashen","Lonely","Lunar","Pale","Dark","Lost","Whisper"];
   const noun = ["Wolf","Rose","Ghost","Raven","Storm","Moon","Tear","Flame","Soul","Mist","Void","Echo","Ash","Dream","Crow"];
@@ -77,8 +84,7 @@
   }
   document.getElementById("pseudonym").textContent = getMe();
 
-  // ── Istoricul conversatiei cu AI ──
-  // Trimitem tot istoricul la fiecare mesaj ca AI-ul sa tina minte
+  // ── Istoricul conversatiei ──
   const history = [];
 
   async function send() {
@@ -97,6 +103,38 @@
     await getAIResponse();
   }
 
+  async function getAIResponse() {
+    const indicator = document.getElementById("typing-indicator");
+    const sendBtn   = document.getElementById("sendBtn");
+    indicator.style.display = "flex";
+    sendBtn.disabled = true;
+
+    try {
+      // Trimite istoricul la serverul Vercel
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: history })
+      });
+
+      const data   = await response.json();
+      const aiText = data.text || "Umbra nu raspunde momentan...";
+
+      // Adauga raspunsul AI in istoric
+      history.push({ role: "assistant", content: aiText });
+
+      // Afiseaza raspunsul
+      addMessage(aiText, "Meduza AI", "ai");
+
+    } catch (err) {
+      console.error("Eroare API:", err);
+      addMessage("Conexiunea cu umbra s-a întrerupt. Încearcă din nou.", "Meduza AI", "ai");
+    } finally {
+      indicator.style.display = "none";
+      sendBtn.disabled = false;
+    }
+  }
+
   function addMessage(text, author, type) {
     const msgs = document.getElementById("messages");
     const time = new Date().toLocaleTimeString("ro-RO", { hour:"2-digit", minute:"2-digit" });
@@ -112,42 +150,6 @@
       </div>`;
     msgs.appendChild(div);
     msgs.scrollTop = msgs.scrollHeight;
-  }
-
-  async function getAIResponse() {
-    const indicator = document.getElementById("typing-indicator");
-    const sendBtn   = document.getElementById("sendBtn");
-    indicator.style.display = "flex";
-    sendBtn.disabled = true;
-
-    try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          system: `Esti Meduza, un asistent empatic si misterios pentru un chat anonim.
-Vorbesti in romana, cu un ton cald, poetic si intelegator.
-Esti aici sa asculti, sa oferi suport emotional si sa ajuti utilizatorii sa se simta intelesi.
-Raspunsurile tale sunt scurte (2-4 propozitii), sincere si fara judecata.
-Folosesti uneori metafore poetice subtile.`,
-          messages: history
-        })
-      });
-
-      const data   = await response.json();
-      const aiText = data.content?.[0]?.text || "Umbra nu raspunde momentan...";
-
-      history.push({ role: "assistant", content: aiText });
-      addMessage(aiText, "Meduza AI", "ai");
-
-    } catch (err) {
-      addMessage("Ceva nu a mers. Încearcă din nou.", "Meduza AI", "ai");
-    } finally {
-      indicator.style.display = "none";
-      sendBtn.disabled = false;
-    }
   }
 
   function react(btn) {
